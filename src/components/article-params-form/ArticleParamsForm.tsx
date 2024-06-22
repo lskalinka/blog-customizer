@@ -16,8 +16,8 @@ import {
 } from 'src/constants/articleProps';
 import { RadioGroup } from '../radio-group';
 import { Separator } from '../separator';
-import { useClickOverlayForm } from './hooks/useClickOverlayForm';
 import clsx from 'clsx';
+import { useClose } from './hooks/useClose';
 
 type ArticleParamsFormProps = {
 	articleState: ArticleStateType;
@@ -52,37 +52,22 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 		setIsMenuOpen((value) => !value);
 	};
 
-	const formRef = useRef<HTMLFormElement | null>(null);
-	const arrowButtonRef = useRef<HTMLDivElement | null>(null);
-	const clickOverlay = (event: MouseEvent) => {
-		const { target } = event;
-		if (
-			target instanceof Node &&
-			!formRef.current?.contains(target) &&
-			!arrowButtonRef.current?.contains(target)
-		) {
-			setIsMenuOpen((isMenuOpen) => !isMenuOpen);
-		}
-	};
+	const menuRef = useRef<HTMLDivElement | null>(null);
 
-	useClickOverlayForm({
-		clickOverlay,
-		formRef,
-		isMenuOpen,
+	useClose({
+		isOpen: isMenuOpen,
+		onClose: handleClick,
+		rootRef: menuRef,
 	});
 
 	return (
-		<>
-			<ArrowButton
-				value={isMenuOpen}
-				handleClick={handleClick}
-				arrowButtonRef={arrowButtonRef}
-			/>
+		<div ref={menuRef}>
+			<ArrowButton value={isMenuOpen} handleClick={handleClick} />
 			<aside
 				className={clsx(styles.container, {
 					[styles.container_open]: isMenuOpen,
 				})}>
-				<form className={styles.form} onSubmit={submit} ref={formRef}>
+				<form className={styles.form} onSubmit={submit}>
 					<Text as='h2' size={31} weight={800} uppercase dynamicLite>
 						Задайте параметры
 					</Text>
@@ -129,6 +114,6 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 					</div>
 				</form>
 			</aside>
-		</>
+		</div>
 	);
 };
