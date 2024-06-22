@@ -5,6 +5,7 @@ import styles from './ArrowButton.module.scss';
 type ArrowButtonProps = {
 	value: boolean;
 	handleClick?: () => void;
+	arrowButtonRef?: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export const ArrowButton = (props: ArrowButtonProps) => {
@@ -13,6 +14,7 @@ export const ArrowButton = (props: ArrowButtonProps) => {
 	return (
 		/* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */
 		<div
+			ref={props.arrowButtonRef}
 			onClick={props.handleClick}
 			role='button'
 			aria-label='Открыть/Закрыть форму параметров статьи'

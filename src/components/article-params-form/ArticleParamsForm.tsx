@@ -53,9 +53,14 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	};
 
 	const formRef = useRef<HTMLFormElement | null>(null);
+	const arrowButtonRef = useRef<HTMLDivElement | null>(null);
 	const clickOverlay = (event: MouseEvent) => {
 		const { target } = event;
-		if (target instanceof Node && !formRef.current?.contains(target)) {
+		if (
+			target instanceof Node &&
+			!formRef.current?.contains(target) &&
+			!arrowButtonRef.current?.contains(target)
+		) {
 			setIsMenuOpen((isMenuOpen) => !isMenuOpen);
 		}
 	};
@@ -63,11 +68,16 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	useClickOverlayForm({
 		clickOverlay,
 		formRef,
+		isMenuOpen,
 	});
 
 	return (
 		<>
-			<ArrowButton value={isMenuOpen} handleClick={handleClick} />
+			<ArrowButton
+				value={isMenuOpen}
+				handleClick={handleClick}
+				arrowButtonRef={arrowButtonRef}
+			/>
 			<aside
 				className={clsx(styles.container, {
 					[styles.container_open]: isMenuOpen,
