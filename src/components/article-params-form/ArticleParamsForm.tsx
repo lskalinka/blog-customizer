@@ -16,6 +16,8 @@ import {
 } from 'src/constants/articleProps';
 import { RadioGroup } from '../radio-group';
 import { Separator } from '../separator';
+import { useClickOverlayForm } from './hooks/useClickOverlayForm';
+import clsx from 'clsx';
 
 type ArticleParamsFormProps = {
 	articleState: ArticleStateType;
@@ -25,10 +27,9 @@ type ArticleParamsFormProps = {
 };
 
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
-	const [value, setValue] = useState(false);
-	const nameStyle = value === false ? null : styles.container_open;
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const handleClick = () => {
-		setValue((value) => !value);
+		setIsMenuOpen((isMenuOpen) => !isMenuOpen);
 	};
 	const changeFontFamily = (value: OptionType) => {
 		props.setArticleState({ ...props.articleState, fontFamilyOption: value });
@@ -48,23 +49,29 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const submit = (e: FormEvent) => {
 		e.preventDefault();
 		props.applyArticleStyle();
-		setValue((value) => !value);
+		setIsMenuOpen((value) => !value);
 	};
 
 	const formRef = useRef<HTMLFormElement | null>(null);
 	const clickOverlay = (event: MouseEvent) => {
 		const { target } = event;
 		if (target instanceof Node && !formRef.current?.contains(target)) {
-			setValue((value) => !value);
+			setIsMenuOpen((isMenuOpen) => !isMenuOpen);
 		}
 	};
 
-	window.addEventListener('mousedown', clickOverlay);
+	useClickOverlayForm({
+		clickOverlay,
+		formRef,
+	});
 
 	return (
 		<>
-			<ArrowButton value={value} handleClick={handleClick} />
-			<aside className={`${nameStyle} ${styles.container}`}>
+			<ArrowButton value={isMenuOpen} handleClick={handleClick} />
+			<aside
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
 				<form className={styles.form} onSubmit={submit} ref={formRef}>
 					<Text as='h2' size={31} weight={800} uppercase dynamicLite>
 						Задайте параметры
